@@ -1,0 +1,39 @@
+# configs/train_config.yaml
+
+data:
+  path: "data/CelebA-HQ/images_512"  # Updated path to 256 images (ensure images exist here)
+  image_size: 256                    # Updated from 512
+  normalize: true
+  captions: "data/CelebA-HQ-Captions.csv"
+
+model:
+  type: dit
+  latent_dim: 4                      # VAE output channels remain the same
+  img_size: 32                       # 256 / 8 = 32 (VAE downscaling factor)
+  hidden_size: 768                   # Optional: reduce for memory savings # 768/512
+  depth: 12                           # Optional: shallower model for speed # 12/8
+  num_heads: 12                       # Adjusted with hidden size # 12/8
+  attn_head_dim: 64                 # hidden_size // num_heads = 512 / 8
+  patch_size: 1                      # Keep same unless you want DiT-B/2 etc.
+
+training:
+  validation_split: 0.995
+  epochs: 7
+  batch_size: 4                      # You can try a higher batch size now
+  lr: 1e-4
+  grad_accum_steps: 2
+  use_ema: true
+  ema_beta: 0.995
+  step_start_ema: 2000
+  num_workers: 4
+
+sampling:                    # Reduced to fit 256 image size
+  num_samples: 25                    # Keep same for consistency
+  steps: 50             # Adjusted for faster inference
+  # guidance_scale: 7.5                 # Adjusted for better quality
+
+scheduler:
+  type: linear
+  timesteps: 1000
+  beta_start: 0.0001
+  beta_end: 0.02

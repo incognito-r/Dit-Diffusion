@@ -1,0 +1,69 @@
+data:
+  path:
+    images: "data/CelebA-HQ/images_512"
+    captions: "data/CelebA-HQ-Captions.csv"
+    
+  img_size: 512
+
+model:
+  unet:
+    img_channels : 3
+    down_channels : [32, 64, 128, 256]
+    mid_channels : [256, 256, 128]
+    down_sample : [True, True, False]
+    time_emb_dim : 128
+    num_down_layers : 2
+    num_mid_layers : 2
+    num_up_layers : 2
+    num_heads : 4
+  
+  dit:
+    in_channels: 4
+    patch_size: 1
+    hidden_size: 768  # You can use 512 or 384 for lower memory
+    depth: 12
+    num_heads: 12
+    img_size: 64
+
+
+training:
+  validation_split: 0
+  batch_size: 2
+  epochs: 5
+  warmup_epochs: 5
+  lr: 1e-4
+  gradient_accumulation_steps: 1
+  num_workers: 4
+
+  loss_weights: # settings based on images resolution
+    mse_weight: 1.0
+    l1_weight: 0.1
+    vgg_weight: 0.0
+    lpips_weight: 0.7
+  
+sample:
+  path: "output/samples"
+  num_samples: 100
+  num_grid_rows: 10
+  save_interval: 1000
+  sample_interval: 1000
+
+
+scheduler:
+  type: "cosine" # cosine, linear
+  timesteps: 1000
+  beta_start: 0.0001
+  beta_end: 0.02
+
+checkpoint:
+  path: "checkpoints"
+  ckpt_name: "regular_ckpt.pth"
+  ema_ckpt_name: "ema_ckpt.pth"
+  name_G: "generator"
+  name_D: "discriminator"
+
+output_dir:
+  train: "output/train"
+  test: "output/test"
+
+logs: "logs"
