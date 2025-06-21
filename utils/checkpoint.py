@@ -45,14 +45,14 @@ def load_training_state(checkpoint_path, model, optimizer, discriminator=None, o
     # Load core components
     model.load_state_dict(ckpt['model_state_dict'])
     optimizer.load_state_dict(ckpt["optimizer_state_dict"])
-    
+    print("Loaded model and optimizer")
     # Handle discriminator (new in v2)
     if discriminator:
         discriminator.load_state_dict(ckpt['discriminator_state_dict'])
         if optimizer_d:
             optimizer_d.load_state_dict(ckpt['optimizer_d_state_dict'])
-            
             print("Loaded discriminator and optimizer")
+
     elif not discriminator:
         print("⚠️ No discriminator found - initializing new one")
         # Initialize discriminator weights here if needed
@@ -60,6 +60,7 @@ def load_training_state(checkpoint_path, model, optimizer, discriminator=None, o
     # Handle scheduler
     if lr_scheduler and "lr_scheduler_state_dict" in ckpt:
         lr_scheduler.load_state_dict(ckpt["lr_scheduler_state_dict"])
+        print("Loaded learning rate scheduler")
     
     start_epoch = ckpt["epoch"] + 1  # Start from NEXT epoch
     print(f"Resuming at epoch {start_epoch}, previous loss: {ckpt['loss']:.4f}")

@@ -15,7 +15,7 @@ import lpips
 def main():
     
     torch.manual_seed(1)
-    handle = init_nvml()
+    handle = init_nvml() 
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Using device: {device}")
@@ -27,7 +27,7 @@ def main():
     # Load configuration
     config = OmegaConf.load("configs/train_config_256.yaml")
     # config = OmegaConf.load("configs/train_config_512.yaml"
-    
+    print(f"Configuration loaded: {config}")
     #==================================================================
 
     # === Load VAE from diffusers ===
@@ -67,18 +67,29 @@ def main():
     MSE_LOSS = torch.nn.MSELoss()
     MSE_LOSS_D = torch.nn.MSELoss()
     LPIPS_LOSS = lpips.LPIPS(net='vgg').to(device).eval()
+
+    print("Models and optimizers initialized successfully.")
     #===================================================================
 
     # === Load data ===
     dataloader, _ = CelebAloader(data_config=config.data, train_config=config.training)
 
+    print("Models and optimizers initialized successfully.")
     print(f"Dataset size: {len(dataloader.dataset)} images")
     batch = next(iter(dataloader))
     print(f"Batch shape: {batch.shape}, Device: {batch.device}")
 
     # === Load checkpoint ===
-    checkpoint_path = os.path.join("checkpoints", "dit_last.pth")
-    start_epoch, best_loss = load_training_state(checkpoint_path, model, optimizer, discriminator=discriminator, optimizer_d=optimizer_d, device=device)
+    checkpoint_dir = config.checkpoint.path
+    os.makedirs(checkpoint_dir, exist_ok=True)
+
+    ckpt_path = os.path.join(checkpoint_dir, config.checkpoint.ckpt_name)
+    ema_ckpt_path = os.path.join(checkpoint_dir, config.checkpoint.ema_ckpt_name)
+
+    # ckpt_path = "checkpoints/dit_diffusion_ckpt_256.pth"
+    # ema_ckpt_path = "checkpoints/dit_diffusion_ema_ckpt_256.pth"
+
+    start_epoch, best_loss = load_training_state(ckpt_path, model, optimizer, discriminator=discriminator, optimizer_d=optimizer_d, device=device)
     print(f"Resuming training from epoch {start_epoch} with best loss {best_loss:.4f}")
 
     # ===== Training Loop =====
@@ -169,7 +180,7 @@ def main():
 
         # ---- Checkpointing ----
         save_training_state(
-            checkpoint_path=checkpoint_path,
+            checkpoint_path=ckpt_path,
             epoch=epoch,
             model=model,
             optimizer=optimizer,
@@ -180,7 +191,7 @@ def main():
         )
         
         # Save EMA model
-        torch.save(ema_model.state_dict(), f"checkpoints/ema_epoch_{epoch+1}.pth")
+        torch.save(ema_model.state_dict(), ema_ckpt_path)
         print(f"Epoch {epoch+1} completed. Avg Loss: {avg_loss:.4f}")
 
         if torch.cuda.is_available():

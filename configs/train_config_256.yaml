@@ -1,10 +1,20 @@
 # configs/train_config.yaml
 
 data:
-  path: "data/CelebA-HQ/images_512"  # Updated path to 256 images (ensure images exist here)
-  image_size: 256                    # Updated from 512
-  normalize: true
-  captions: "data/CelebA-HQ-Captions.csv"
+  path: "data/CelebA-HQ/images_512"  # Local Images Path
+  parquet_path: "/dbfs/mnt/ds-space/Hitesh/Datasets/CelebA-HQ/parquet_files/CelebA-HQ.parquet"  # Parquet Dataset Path:  /dbfs/mnt/ds-space/Hitesh/Datasets/CelebA-HQ/parquet_files/CelebA-HQ.parquet
+  image_size: 256             
+  normalize: True
+  captions: "data/CelebA-HQ-Captions.csv" #  Future use
+
+checkpoint:
+  path: "/dbfs/mnt/ds-space/Hitesh/Checkpoints/" # Checkpoint Path: /dbfs/mnt/ds-space/Hitesh/Checkpoints/
+  ckpt_name: "dit_diffusion_ckpt_256.pth"
+  ema_ckpt_name: "dit_diffusion_ema_ckpt_256.pth"
+
+output_dir:
+  train: "output/train" # Training Samples Output Directory
+  test: "output/test" # Inference Samples Output Directory
 
 model:
   type: dit
@@ -37,3 +47,6 @@ scheduler:
   timesteps: 1000
   beta_start: 0.0001
   beta_end: 0.02
+
+
+logs: "logs"

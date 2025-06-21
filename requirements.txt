@@ -1,1 +1,8 @@
-pynvml
+torch 
+torchvision 
+torchaudio
+transformers
+accelerate
+diffusers
+omegaconf
+lpips
