@@ -29,11 +29,11 @@ model:
 training:
   validation_split: 0.995
   epochs: 7
-  batch_size: 4                      # You can try a higher batch size now
+  batch_size: 32                      # You can try a higher batch size now
   lr: 1e-4
   grad_accum_steps: 2
   use_ema: true
-  ema_beta: 0.995
+  ema_beta: 0.0
   step_start_ema: 2000
   num_workers: 4
 

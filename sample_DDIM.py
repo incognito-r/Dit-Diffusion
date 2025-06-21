@@ -36,7 +36,7 @@ def main():
 
     # === Load EMA model ===
     ema_model, ema = create_ema_model(model, beta=config.training.ema_beta, step_start_ema=config.training.step_start_ema)
-    ckpt_path = "checkpoints/ema_epoch_2.pth"  # Update if needed
+    ckpt_path = "checkpoints/dit_diffusion_ema_ckpt_256.pth"  # Update if needed
     ema_model.load_state_dict(torch.load(ckpt_path, map_location=device))
     ema_model.eval()
 
