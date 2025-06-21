@@ -28,9 +28,9 @@ model:
 
 training:
   validation_split: 0
-  epochs: 5
-  batch_size: 2
-  lr: 1e-4
+  epochs: 100
+  batch_size: 32
+  lr: 1e-5
   grad_accum_steps: 2
   use_ema: true
   ema_beta: 0.995
@@ -38,7 +38,7 @@ training:
   num_workers: 4
 
 scheduler:
-  type: linear
+  type: squaredcos_cap_v2
   timesteps: 1000
   beta_start: 0.0001
   beta_end: 0.02
@@ -47,12 +47,3 @@ sampling:                    # Reduced to fit 256 image size
   num_samples: 25                    # Keep same for consistency
   steps: 50             # Adjusted for faster inference
   # guidance_scale: 7.5                 # Adjusted for better quality
-
-scheduler:
-  type: linear
-  timesteps: 1000
-  beta_start: 0.0001
-  beta_end: 0.02
-
-
-logs: "logs"

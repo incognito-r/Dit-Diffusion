@@ -27,7 +27,7 @@ def main():
     # Load configuration
     config = OmegaConf.load("configs/train_config_256.yaml")
     # config = OmegaConf.load("configs/train_config_512.yaml"
-    print(f"Configuration loaded: {config}")
+    print(f"Configuration loaded: {OmegaConf.to_yaml(config)}")
     #==================================================================
 
     # === Load VAE from diffusers ===
@@ -51,7 +51,7 @@ def main():
         num_train_timesteps=config.scheduler.timesteps,
         beta_start=config.scheduler.beta_start,
         beta_end=config.scheduler.beta_end,
-        beta_schedule="linear",
+        beta_schedule=config.scheduler.type
     )
 
     # EMA model
@@ -77,7 +77,7 @@ def main():
     print("Models and optimizers initialized successfully.")
     print(f"Dataset size: {len(dataloader.dataset)} images")
     batch = next(iter(dataloader))
-    print(f"Batch shape: {batch.shape}, Device: {batch.device}")
+    print(f"Batch shape: {batch.shape}")
 
     # === Load checkpoint ===
     checkpoint_dir = config.checkpoint.path

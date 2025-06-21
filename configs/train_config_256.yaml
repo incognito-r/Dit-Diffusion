@@ -28,9 +28,9 @@ model:
 
 training:
   validation_split: 0.995
-  epochs: 7
-  batch_size: 32                      # You can try a higher batch size now
-  lr: 1e-4
+  epochs: 100
+  batch_size: 4                      # You can try a higher batch size now
+  lr: 1e-5
   grad_accum_steps: 2
   use_ema: true
   ema_beta: 0.0
@@ -43,7 +43,7 @@ sampling:                    # Reduced to fit 256 image size
   # guidance_scale: 7.5                 # Adjusted for better quality
 
 scheduler:
-  type: linear
+  type: squaredcos_cap_v2
   timesteps: 1000
   beta_start: 0.0001
   beta_end: 0.02
