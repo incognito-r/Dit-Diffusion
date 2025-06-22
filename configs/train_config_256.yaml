@@ -4,11 +4,11 @@ data:
   path: "data/CelebA-HQ/images_512"  # Local Images Path
   parquet_path: "/dbfs/mnt/ds-space/Hitesh/Datasets/CelebA-HQ/parquet_files/CelebA-HQ.parquet"  # Parquet Dataset Path:  /dbfs/mnt/ds-space/Hitesh/Datasets/CelebA-HQ/parquet_files/CelebA-HQ.parquet
   image_size: 256             
-  normalize: True
-  captions: "data/CelebA-HQ-Captions.csv" #  Future use
+  normalize: true
+  caption_path: "data/CelebA-HQ/captions.csv" #  Future use
 
 checkpoint:
-  path: "/dbfs/mnt/ds-space/Hitesh/Checkpoints/" # Checkpoint Path: /dbfs/mnt/ds-space/Hitesh/Checkpoints/
+  path: "Checkpoints/" # Checkpoint Path: /dbfs/mnt/ds-space/Hitesh/Checkpoints/
   ckpt_name: "dit_diffusion_ckpt_256.pth"
   ema_ckpt_name: "dit_diffusion_ema_ckpt_256.pth"
 
@@ -17,14 +17,14 @@ output_dir:
   test: "output/test" # Inference Samples Output Directory
 
 training:
-  batch_size: 8
+  batch_size: 4
   validation_split: 0
   epochs: 100
   warmup_epochs: 10
   lr: 1e-4
   grad_accum_steps: 2
   use_ema: true
-  ema_beta: 0.0
+  ema_beta: 0.995
   step_start_ema: 2000
   num_workers: 4
 

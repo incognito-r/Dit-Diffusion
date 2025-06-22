@@ -135,7 +135,7 @@ def main():
                     else:
                         lpips_weight = 0.1
                 # -----
-
+        
                 # Total loss
                 total_loss= mse_loss + lpips_weight * lpips_loss
                 # ======================

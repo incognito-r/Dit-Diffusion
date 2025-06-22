@@ -1,6 +1,15 @@
+torch
+diffusers
 tqdm
 pynvml
 transformers
+xformers
 accelerate
 omegaconf
 lpips
+
+
+torch: Version: 2.7.0+cu118
+diffusers: Version: 0.33.1
+transformers: Version: 4.52.4
+accelerate: Version: 1.8.1Version: 1.8.1

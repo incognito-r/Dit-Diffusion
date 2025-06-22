@@ -90,4 +90,4 @@ def save_training_state(checkpoint_path, epoch, model, optimizer, avg_loss, best
     # ===== Save metadata after saving the checkpoint =====
     # Save metadata. This will create or append to a CSV file in the same directory
     checkpoint_dir = os.path.dirname(checkpoint_path)
-    # save_metadata(checkpoint_dir, epoch+1, checkpoint_path, avg_loss, best_loss if best_loss is not None else avg_loss)
+    save_metadata(checkpoint_dir, epoch+1, checkpoint_path, avg_loss, best_loss if best_loss is not None else avg_loss)
