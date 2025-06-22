@@ -17,6 +17,9 @@ def main():
     scaler = torch.amp.GradScaler('cuda') if device == "cuda" else None
 
     # === Sampling ===
+    output_dir = sample_config.dir
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = os.path.join(output_dir, "samples_grid.png")
     num_samples = sample_config.get("num_samples", 4)  # Default to 4 samples if not specified
     steps = sample_config.get("steps", 50)  # Default to 50 steps if not specified
 
@@ -35,8 +38,16 @@ def main():
 
     # === Load EMA model ===
     ema_model, ema = create_ema_model(model, beta=config.training.ema_beta, step_start_ema=config.training.step_start_ema)
-    ckpt_path = "checkpoints/ema_epoch_1.pth"  # Update if needed
-    ema_model.load_state_dict(torch.load(ckpt_path, map_location=device))
+    
+    # checkpoint #
+    ckpt_dir = config.checkpoint.path
+    ema_ckpt_name = config.checkpoint.ema_ckpt_name
+    # ckpt_name = config.checkpoint.ckpt_name
+
+    ema_ckpt_path = os.path.join(ckpt_dir, ema_ckpt_name)
+    # ckpt_path = "checkpoints/ema_epoch_1.pth"  # Update if needed
+
+    ema_model.load_state_dict(torch.load(ema_ckpt_path, map_location=device))
     ema_model.eval()
 
     # === DDIM Scheduler ===
@@ -67,9 +78,8 @@ def main():
     imgs = (imgs.clamp(-1, 1) + 1) / 2  # [-1, 1] → [0, 1]
 
     # === Save Grid ===
-    os.makedirs("output/samples", exist_ok=True)
-    save_image(make_grid(imgs, nrow=5), "output/samples/sample_grid_test.png")
-    print("✅ Samples saved to output/samples/sample_grid.png")
+    save_image(make_grid(imgs, nrow=5), output_path)
+    print(f"✅ Samples saved to {output_path}")
 
 if __name__ == "__main__":
     torch.cuda.empty_cache()

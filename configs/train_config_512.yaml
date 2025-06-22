@@ -28,7 +28,8 @@ training:
   step_start_ema: 2000
   num_workers: 4
 
-sampling:                    # Reduced to fit 256 image size
+sampling:
+  dir: "output/samples"
   num_samples: 25                    # Keep same for consistency
   steps: 50             # Adjusted for faster inference
   # guidance_scale: 7.5                 # Adjusted for better quality
