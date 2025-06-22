@@ -16,6 +16,23 @@ output_dir:
   train: "output/train" # Training Samples Output Directory
   test: "output/test" # Inference Samples Output Directory
 
+training:
+  batch_size: 4
+  validation_split: 0
+  epochs: 100
+  warmup_epochs: 10
+  lr: 1e-4
+  grad_accum_steps: 2
+  use_ema: true
+  ema_beta: 0.995
+  step_start_ema: 2000
+  num_workers: 4
+
+sampling:                    # Reduced to fit 256 image size
+  num_samples: 25                    # Keep same for consistency
+  steps: 50             # Adjusted for faster inference
+  # guidance_scale: 7.5                 # Adjusted for better quality
+
 model:
   type: dit
   latent_dim: 4
@@ -26,16 +43,6 @@ model:
   attn_head_dim: 64
   patch_size: 1
 
-training:
-  validation_split: 0
-  epochs: 100
-  batch_size: 32
-  lr: 1e-5
-  grad_accum_steps: 2
-  use_ema: true
-  ema_beta: 0.995
-  step_start_ema: 2000
-  num_workers: 4
 
 scheduler:
   type: squaredcos_cap_v2
@@ -43,7 +50,4 @@ scheduler:
   beta_start: 0.0001
   beta_end: 0.02
 
-sampling:                    # Reduced to fit 256 image size
-  num_samples: 25                    # Keep same for consistency
-  steps: 50             # Adjusted for faster inference
-  # guidance_scale: 7.5                 # Adjusted for better quality
+logs: "logs"

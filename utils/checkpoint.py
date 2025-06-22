@@ -1,6 +1,4 @@
 import os
-import random
-import numpy as np
 import torch
 from datetime import datetime
 import csv
@@ -31,7 +29,7 @@ def save_metadata(checkpoint_dir, epoch, checkpoint_path, avg_loss, best_loss):
 
 def load_training_state(checkpoint_path, model, optimizer, discriminator=None, optimizer_d=None, 
                       lr_scheduler=None, device='cpu'):
-    """Load training state with discriminator support"""
+    
     if not os.path.exists(checkpoint_path):
         print(f"⚠️ Checkpoint not found at {checkpoint_path}. Starting from scratch.")
         return 0, float('inf')
@@ -42,23 +40,19 @@ def load_training_state(checkpoint_path, model, optimizer, discriminator=None, o
     # Initialize best_loss
     best_loss = ckpt.get('best_loss', float('inf'))
     
-    # Load core components
+    # Load Model Components
     model.load_state_dict(ckpt['model_state_dict'])
     optimizer.load_state_dict(ckpt["optimizer_state_dict"])
-    print("Loaded model and optimizer")
-    # Handle discriminator (new in v2)
-    if discriminator:
-        discriminator.load_state_dict(ckpt['discriminator_state_dict'])
-        if optimizer_d:
-            optimizer_d.load_state_dict(ckpt['optimizer_d_state_dict'])
-            print("Loaded discriminator and optimizer")
+    print("Loaded base model and optimizer")
 
-    elif not discriminator:
-        print("⚠️ No discriminator found - initializing new one")
-        # Initialize discriminator weights here if needed
-    
+    # discriminator
+    if discriminator and optimizer_d:
+        discriminator.load_state_dict(ckpt['discriminator_state_dict'])
+        optimizer_d.load_state_dict(ckpt['optimizer_d_state_dict'])
+        print("Loaded discriminator and optimizer")
+
     # Handle scheduler
-    if lr_scheduler and "lr_scheduler_state_dict" in ckpt:
+    if lr_scheduler:
         lr_scheduler.load_state_dict(ckpt["lr_scheduler_state_dict"])
         print("Loaded learning rate scheduler")
     
@@ -79,22 +73,21 @@ def save_training_state(checkpoint_path, epoch, model, optimizer, avg_loss, best
     }
     
     # Add discriminator if available
-    if discriminator:
+    if discriminator and optimizer_d:
         ckpt["discriminator_state_dict"] = discriminator.state_dict()
-    if optimizer_d:
         ckpt["optimizer_d_state_dict"] = optimizer_d.state_dict()
+        print("Discriminator Saved!!")
     
     # Add scheduler if available
     if lr_scheduler:
         ckpt["lr_scheduler_state_dict"] = lr_scheduler.state_dict()
+        print("Learning Rate Scheduler Saved!!")
     
     torch.save(ckpt, checkpoint_path)
     print(f"💾 Saved checkpoint at epoch {epoch+1}")
     
 
-
-
     # ===== Save metadata after saving the checkpoint =====
     # Save metadata. This will create or append to a CSV file in the same directory
     checkpoint_dir = os.path.dirname(checkpoint_path)
-    save_metadata(checkpoint_dir, epoch+1, checkpoint_path, avg_loss, best_loss if best_loss is not None else avg_loss)
+    # save_metadata(checkpoint_dir, epoch+1, checkpoint_path, avg_loss, best_loss if best_loss is not None else avg_loss)

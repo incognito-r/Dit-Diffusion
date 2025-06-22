@@ -14,7 +14,6 @@ def main():
     config = OmegaConf.load("configs/train_config_256.yaml")
     sample_config = config.sampling
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    handle = init_nvml()
     scaler = torch.amp.GradScaler('cuda') if device == "cuda" else None
 
     # === Sampling ===
@@ -36,7 +35,7 @@ def main():
 
     # === Load EMA model ===
     ema_model, ema = create_ema_model(model, beta=config.training.ema_beta, step_start_ema=config.training.step_start_ema)
-    ckpt_path = "checkpoints/dit_diffusion_ema_ckpt_256.pth"  # Update if needed
+    ckpt_path = "checkpoints/ema_epoch_1.pth"  # Update if needed
     ema_model.load_state_dict(torch.load(ckpt_path, map_location=device))
     ema_model.eval()
 
@@ -50,8 +49,6 @@ def main():
     
       # You can change this to 25 / 100 / 250 etc.
     scheduler.set_timesteps(steps)
-
-
 
     latent_shape = (num_samples, config.model.latent_dim, config.model.img_size, config.model.img_size)
     x = torch.randn(latent_shape).to(device)
@@ -71,7 +68,7 @@ def main():
 
     # === Save Grid ===
     os.makedirs("output/samples", exist_ok=True)
-    save_image(make_grid(imgs, nrow=5), "output/samples/sample_grid.png")
+    save_image(make_grid(imgs, nrow=5), "output/samples/sample_grid_test.png")
     print("✅ Samples saved to output/samples/sample_grid.png")
 
 if __name__ == "__main__":
